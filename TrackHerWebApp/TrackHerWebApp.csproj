@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <RazorGenerate Include="Views\**\*.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TrackHer\TrackHer.csproj" />
   </ItemGroup>
 

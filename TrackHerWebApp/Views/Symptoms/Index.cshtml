@@ -1,4 +1,4 @@
-﻿@model List<SymptomViewModel>
+﻿@model List<TrackHerWebApp.Models.SymptomViewModel>
 
 @{
     ViewData["Title"] = "Home Page";
@@ -16,11 +16,9 @@
         <h3>@symptomViewModel.Name</h3>
         <ul>
             @foreach (var value in symptomViewModel.Values)
-            {
-                <ul>
+            {                
                 <input type="checkbox" name="SelectedSymptomsId" value="@value.Id" />
-                <strong>@value.Description</strong>
-                </ul>
+                <strong>@value.Description</strong>                
             }
         </ul>
     }

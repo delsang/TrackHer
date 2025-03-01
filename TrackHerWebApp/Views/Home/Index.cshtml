@@ -1,4 +1,4 @@
-﻿@model List<TrackHerWebApp.Models.SymptomViewModel>
+﻿@model List<TrackHer.SymptomLevel>
 
 @{
     ViewData["Title"] = "Home Page";
@@ -9,18 +9,17 @@
     <p>How have you been feeling today?</p>
 </div>
 
-<form asp-action="SubmitSymptoms" method="post">
-
-    @foreach (var symptomViewModel in Model)
+<form asp-action="SubmitSymptoms" asp-controller="Symptoms" method="post">
+    @foreach (var group in Model.GroupBy(s => s.SymptomGroup))
     {
-        <h3>@symptomViewModel.Name</h3>
-        <ul>
-            @foreach (var value in symptomViewModel.Values)
-            {
-                <input type="checkbox" name="SelectedSymptomsId" value="@value.Id" />
-                <strong>@value.Description</strong>
-            }
-        </ul>
-    }
-    <button type="submit" class="btn btn-primary">I'm done!</button>
+        <h2>@group.Key</h2> 
+        <div>
+        @foreach (var symptom in group)
+        {
+            <input type="checkbox" name="selectedSymptomsId" value="@symptom.Id" />
+            <label>@symptom.Description </label><br />
+        }
+        </div>
+    }   
+    <button type="submit">Submit</button>
 </form>

@@ -4,10 +4,44 @@
     ViewData["Title"] = "Today's Colour";
 }
 
-<h1>@Model.ConfirmationMessage</h1>
+<style>
+    .colour-swatch {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        margin: 1.5rem auto;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    }
+    .insight-card {
+        max-width: 560px;
+        margin: 1.5rem auto;
+        padding: 1.5rem 2rem;
+        border-radius: 16px;
+        background: #fafafa;
+        border: 1px solid #eee;
+        text-align: left;
+    }
+    .insight-card p { margin: 0; font-size: 0.95rem; line-height: 1.65; color: #333; }
+    .insight-card + .insight-card { margin-top: 1rem; }
+    .insight-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: #aaa; margin-bottom: 0.5rem; }
+</style>
 
-<div style="width: 200px; height: 200px; background-color: @Model.HexColour; border: 1px solid #ccc; margin: 1rem 0;"></div>
+<div class="text-center">
+    <p style="color: #888; font-size: 0.85rem; margin-bottom: 0.25rem;">@Model.ConfirmationMessage</p>
+    <h1 style="font-size: 2rem; font-weight: 700;">@Model.Colour</h1>
+    <p style="color: #aaa; font-size: 0.8rem;">@Model.HexColour</p>
 
-<p><strong>@Model.Colour</strong> &mdash; @Model.HexColour</p>
+    <div class="colour-swatch" style="background-color: @Model.HexColour;"></div>
 
-<a asp-action="Index" asp-controller="Home">Go Back</a>
+    <div class="insight-card">
+        <div class="insight-label">How you're doing</div>
+        <p>@Model.Insight.SupportiveMessage</p>
+    </div>
+
+    <div class="insight-card">
+        <div class="insight-label">Things that might help</div>
+        <p>@Model.Insight.AlleviationSuggestions</p>
+    </div>
+
+    <a asp-action="Index" asp-controller="Home" style="display: inline-block; margin-top: 2rem; color: #888; font-size: 0.85rem; text-decoration: none;">← Log another day</a>
+</div>

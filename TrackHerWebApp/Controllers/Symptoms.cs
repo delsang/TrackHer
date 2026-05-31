@@ -9,17 +9,21 @@ namespace TrackHerWebApp.Controllers
     {
         private readonly IColourCalculator _colourCalculator;
         private readonly IColourApiClient _colourApiClient;
+        private readonly ILlmInsightService _llmInsightService;
 
-        public Symptoms(IColourCalculator colourCalculator, IColourApiClient colourApiClient)
+        public Symptoms(IColourCalculator colourCalculator, IColourApiClient colourApiClient, ILlmInsightService llmInsightService)
         {
             _colourCalculator = colourCalculator;
             _colourApiClient = colourApiClient;
+            _llmInsightService = llmInsightService;
         }
 
         [HttpPost]
         public async Task<IActionResult> SubmitSymptoms()
         {
-            var selectionsByGroup = SymptomRepository.GetAllSymptoms()
+            var allSymptoms = SymptomRepository.GetAllSymptoms();
+
+            var selectionsByGroup = allSymptoms
                 .GroupBy(s => s.SymptomGroup)
                 .OrderBy(g => g.Key)
                 .ToDictionary(
@@ -29,11 +33,20 @@ namespace TrackHerWebApp.Controllers
             var (red, green, blue) = _colourCalculator.Calculate(selectionsByGroup);
             var colour = await _colourApiClient.GetColourAsync(red, green, blue);
 
+            var selectedDescriptions = selectionsByGroup
+                .Where(kvp => kvp.Value > 0)
+                .ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => allSymptoms.FirstOrDefault(s => s.SymptomGroup == kvp.Key && s.Id == kvp.Value)?.Description ?? "");
+
+            var insight = await _llmInsightService.GetInsightAsync(colour.Name, colour.Hex, selectedDescriptions);
+
             var resultModel = new SubmissionResultViewModel
             {
                 ConfirmationMessage = "Thank you! Today's colour is...",
                 Colour = colour.Name,
                 HexColour = colour.Hex,
+                Insight = insight,
             };
 
             return View("SubmissionConfirmation", resultModel);

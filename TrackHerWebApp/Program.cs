@@ -11,6 +11,7 @@ if (builder.Environment.IsDevelopment())
     mvcBuilder.AddRazorRuntimeCompilation();
 builder.Services.AddHttpClient<IColourApiClient, ColourApiClient>();
 builder.Services.AddScoped<IColourCalculator, ColourCalculator>();
+builder.Services.AddSingleton<ILlmInsightService, ClaudeInsightService>();
 
 // Configure middleware
 var app = builder.Build();

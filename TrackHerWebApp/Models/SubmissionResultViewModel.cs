@@ -1,3 +1,5 @@
+using TrackHerWebApp.Services;
+
 namespace TrackHerWebApp.Models
 {
     public class SubmissionResultViewModel
@@ -5,5 +7,6 @@ namespace TrackHerWebApp.Models
         public required string Colour { get; set; }
         public required string ConfirmationMessage { get; set; }
         public required string HexColour { get; set; }
+        public required LlmInsight Insight { get; set; }
     }
 }

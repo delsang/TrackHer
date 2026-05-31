@@ -1,11 +1,10 @@
-﻿using TrackHer;
+using TrackHer;
 
 namespace TrackHerWebApp.Models
 {
     public class SymptomViewModel
     {
         public required string Name { get; set; }
-        public required List<SymptomLevel> Values { get; set; } = new List<SymptomLevel>();
-
+        public required IReadOnlyList<SymptomOption> Values { get; set; }
     }
 }

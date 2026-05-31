@@ -1,32 +1,42 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using TrackHer;
 using TrackHerWebApp.Models;
+using TrackHerWebApp.Services;
 
 namespace TrackHerWebApp.Controllers
 {
     public class Symptoms : Controller
     {
-        [HttpPost]
-        public IActionResult SubmitSymptoms(List<int> selectedSymptomsId)
+        private readonly IColourCalculator _colourCalculator;
+        private readonly IColourApiClient _colourApiClient;
+
+        public Symptoms(IColourCalculator colourCalculator, IColourApiClient colourApiClient)
         {
-            Console.WriteLine($"Symptoms Received: {string.Join(",", selectedSymptomsId)}");
+            _colourCalculator = colourCalculator;
+            _colourApiClient = colourApiClient;
+        }
 
-            if (selectedSymptomsId == null || !selectedSymptomsId.Any())
-            {
-                return View("Error");
-            }
+        [HttpPost]
+        public async Task<IActionResult> SubmitSymptoms()
+        {
+            var selectionsByGroup = SymptomRepository.GetAllSymptoms()
+                .GroupBy(s => s.SymptomGroup)
+                .OrderBy(g => g.Key)
+                .ToDictionary(
+                    g => g.Key,
+                    g => int.TryParse(Request.Form[g.Key], out var n) ? n : 0);
 
-            var colour = selectedSymptomsId.Aggregate("", (current, s) => current + (s + ""));
+            var (red, green, blue) = _colourCalculator.Calculate(selectionsByGroup);
+            var colour = await _colourApiClient.GetColourAsync(red, green, blue);
 
             var resultModel = new SubmissionResultViewModel
             {
                 ConfirmationMessage = "Thank you! Today's colour is...",
-                Colour = colour,
+                Colour = colour.Name,
+                HexColour = colour.Hex,
             };
 
             return View("SubmissionConfirmation", resultModel);
-
-            // https://www.thecolorapi.com/ /id?rgb=rgb(255,0,0)
-
         }
     }
 }

@@ -1,11 +1,16 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TrackHerWebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Register services
-builder.Services.AddControllersWithViews(); // Add MVC controllers or Razor pages, depending on your project
+var mvcBuilder = builder.Services.AddControllersWithViews();
+if (builder.Environment.IsDevelopment())
+    mvcBuilder.AddRazorRuntimeCompilation();
+builder.Services.AddHttpClient<IColourApiClient, ColourApiClient>();
+builder.Services.AddScoped<IColourCalculator, ColourCalculator>();
 
 // Configure middleware
 var app = builder.Build();

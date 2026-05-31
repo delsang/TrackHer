@@ -1,25 +1,96 @@
-﻿@model List<TrackHer.SymptomLevel>
+@model IReadOnlyList<TrackHer.SymptomOption>
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "How are you feeling?";
+    var orderedGroups = Model.GroupBy(s => s.SymptomGroup).OrderBy(g => g.Key).ToList();
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>How have you been feeling today?</p>
+<style>
+    .rgb-section { margin-bottom: 2.5rem; }
+    .symptom-group { margin-bottom: 1.25rem; }
+    .symptom-group h3 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 0.5rem; }
+    .symptom-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .symptom-card {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 130px;
+        min-height: 72px;
+        border: 2px solid #ddd;
+        border-radius: 14px;
+        cursor: pointer;
+        padding: 10px 8px;
+        text-align: center;
+        font-size: 0.75rem;
+        line-height: 1.3;
+        transition: border-color 0.15s, background-color 0.15s;
+        user-select: none;
+    }
+    .symptom-card:hover { border-color: #aaa; background-color: #fafafa; }
+    .symptom-card input[type="radio"] { display: none; }
+    .symptom-card:has(input:checked) { border-color: #333; background-color: #f0f0f0; font-weight: 600; }
+</style>
+
+<div class="text-center mb-4">
+    <h1 class="display-5">How are you feeling today?</h1>
 </div>
 
-<form asp-action="SubmitSymptoms" asp-controller="Symptoms" method="post">
-    @foreach (var group in Model.GroupBy(s => s.SymptomGroup))
-    {
-        <h2>@group.Key</h2> 
-        <div>
-        @foreach (var symptom in group)
+<form asp-controller="Symptoms" asp-action="SubmitSymptoms" method="post" style="width: 100%">
+
+    <div class="rgb-section">
+        @foreach (var group in orderedGroups.Take(3))
         {
-            <input type="checkbox" name="selectedSymptomsId" value="@symptom.Id" />
-            <label>@symptom.Description </label><br />
+            <div class="symptom-group">
+                <h3>@group.Key</h3>
+                <div class="symptom-options">
+                    @foreach (var symptom in group.OrderBy(s => s.Id))
+                    {
+                        <label class="symptom-card">
+                            <input type="radio" name="@group.Key" value="@symptom.Id" checked="@(symptom.Id == 0 ? "checked" : null)" />
+                            @symptom.Description
+                        </label>
+                    }
+                </div>
+            </div>
         }
-        </div>
-    }   
-    <button type="submit">Submit</button>
+    </div>
+
+    <div class="rgb-section">
+        @foreach (var group in orderedGroups.Skip(3).Take(3))
+        {
+            <div class="symptom-group">
+                <h3>@group.Key</h3>
+                <div class="symptom-options">
+                    @foreach (var symptom in group.OrderBy(s => s.Id))
+                    {
+                        <label class="symptom-card">
+                            <input type="radio" name="@group.Key" value="@symptom.Id" checked="@(symptom.Id == 0 ? "checked" : null)" />
+                            @symptom.Description
+                        </label>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="rgb-section">
+        @foreach (var group in orderedGroups.Skip(6))
+        {
+            <div class="symptom-group">
+                <h3>@group.Key</h3>
+                <div class="symptom-options">
+                    @foreach (var symptom in group.OrderBy(s => s.Id))
+                    {
+                        <label class="symptom-card">
+                            <input type="radio" name="@group.Key" value="@symptom.Id" checked="@(symptom.Id == 0 ? "checked" : null)" />
+                            @symptom.Description
+                        </label>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <button type="submit" style="display: block; margin: 3rem auto 0; padding: 0.75rem 3rem; font-size: 1.1rem; background: #333; color: white; border: none; border-radius: 8px; cursor: pointer;">Submit</button>
+
 </form>

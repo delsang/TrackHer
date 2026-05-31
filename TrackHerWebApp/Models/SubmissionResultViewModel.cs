@@ -1,8 +1,9 @@
-﻿namespace TrackHerWebApp.Models
+namespace TrackHerWebApp.Models
 {
     public class SubmissionResultViewModel
     {
         public required string Colour { get; set; }
         public required string ConfirmationMessage { get; set; }
+        public required string HexColour { get; set; }
     }
 }

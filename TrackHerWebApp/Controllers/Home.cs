@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using TrackHer;
-using TrackHerWebApp.Models;
 
 namespace TrackHerWebApp.Controllers
 {
@@ -23,8 +22,6 @@ namespace TrackHerWebApp.Controllers
         {
             return View();
         }
-
-       
 
     }
 }
